@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-
 class ServiceRequest {
   String title;
   String details;
@@ -12,4 +10,9 @@ class ServiceRequest {
     required this.details,
     required this.image,
   });
+
+  Map<String, dynamic> toMap() => {
+        "title": this.title,
+        "details": this.details,
+      };
 }

@@ -1,5 +1,8 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:project19/service/user_service.dart';
+import 'package:project19/view/service_desk/service_desk.dart';
 import 'package:project19/view/service_requests/service_request_page.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +12,30 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  @override
+  void initState() {
+    printPackageInfo();
+    printDeviceInfo();
+    super.initState();
+  }
+
+  printPackageInfo() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      String appName = packageInfo.appName;
+      String packageName = packageInfo.packageName;
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      print("$appName\n$packageName\n$version\n$buildNumber\n");
+    });
+  }
+
+  printDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+    print('Running on ${androidInfo.brand}\n'); // e.g. "Moto G (4)"
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Consumer<UserService>(
@@ -41,6 +68,17 @@ class _LoginPageState extends State<LoginPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ServiceRequestPage(),
+                ),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: Text("Servis Masası"),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ServiceDesk(),
                 ),
               );
             },
