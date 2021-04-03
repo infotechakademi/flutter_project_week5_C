@@ -7,10 +7,22 @@ class ServiceRequestState extends ChangeNotifier {
 
   List<ServiceRequest> get serviceRequestList => _serviceRequestList;
 
+  Stream get serviceRequestListStream =>
+      DatabaseService.instance.getServiceRequestsStream();
+
   void addServiceRequest(ServiceRequest serviceRequest) async {
-    await DatabaseService.instance.addServiceRequest(serviceRequest.toMap());
-    _serviceRequestList.add(serviceRequest);
-    notifyListeners();
+    // image upload
+    print(serviceRequest.imageUrl);
+    serviceRequest.imageUrl =
+        await DatabaseService.instance.uploadImage(serviceRequest);
+
+    // url
+    // serviceRequest.imageUrl = url
+    if (serviceRequest.imageUrl != null) {
+      await DatabaseService.instance.addServiceRequest(serviceRequest.toMap());
+      _serviceRequestList.add(serviceRequest);
+      notifyListeners();
+    }
   }
 
   void removeServiceRequest(ServiceRequest serviceRequest) {

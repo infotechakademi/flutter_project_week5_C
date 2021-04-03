@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:project19/model/user_model.dart';
+import 'package:project19/model/user_model.dart' as ServiceRequest;
 
 enum UserStatus {
   login,
@@ -8,7 +9,7 @@ enum UserStatus {
 }
 
 class UserService extends ChangeNotifier {
-  User? user;
+  ServiceRequest.User? user;
 
   UserStatus userStatus = UserStatus.logout;
 
@@ -16,12 +17,15 @@ class UserService extends ChangeNotifier {
     userStatus = UserStatus.inProgress;
     notifyListeners();
     //
-
+    UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
     // ...
-    await Future.delayed(Duration(milliseconds: 500));
-    if (true) userStatus = UserStatus.login;
 
-    //else userStatus = UserStatus.logout;
+    if (userCredential.user != null) {
+      user?.id = userCredential.user?.uid;
+      userStatus = UserStatus.login;
+    } else
+      userStatus = UserStatus.logout;
     notifyListeners();
   }
 

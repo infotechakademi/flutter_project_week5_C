@@ -5,6 +5,8 @@ import 'package:project19/service/user_service.dart';
 import 'package:project19/view/service_desk/service_desk.dart';
 import 'package:project19/view/service_requests/service_request_page.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,8 +16,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
-    printPackageInfo();
-    printDeviceInfo();
+    //printPackageInfo();
+    //printDeviceInfo();
+    //determineAndPrintPosition();
     super.initState();
   }
 
@@ -84,6 +87,39 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
           ElevatedButton(
+            child: Text("Bağlantıya Git"),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(
+                      appBar: AppBar(),
+                      body: WebView(
+                        initialUrl: "https://www.google.com/",
+                        javascriptMode: JavascriptMode.unrestricted,
+                        javascriptChannels: {
+                          JavascriptChannel(
+                              name: 'Print1',
+                              onMessageReceived: (JavascriptMessage message) {
+                                print(message.message);
+                              }),
+                          JavascriptChannel(
+                              name: 'Print2',
+                              onMessageReceived: (JavascriptMessage message) {
+                                print(message.message);
+                              })
+                        },
+                      ),
+                      floatingActionButton: FloatingActionButton(
+                        onPressed: () {
+                          print("Google");
+                        },
+                      )),
+                ),
+              );
+            },
+          ),
+          ElevatedButton(
             child: Text("Çıkış Yap"),
             onPressed: () {
               Provider.of<UserService>(context, listen: false).signout();
@@ -130,5 +166,60 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  Future<void> determineAndPrintPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    print("_determineAndPrintPosition is executed");
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    print("_determineAndPrintPosition step1");
+
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+
+      return Future.error('Location services are disabled.');
+    }
+    print("_determineAndPrintPosition step2");
+
+    permission = await Geolocator.checkPermission();
+    print("_determineAndPrintPosition step3");
+
+    if (permission == LocationPermission.denied) {
+      print("_determineAndPrintPosition step4");
+
+      permission = await Geolocator.requestPermission();
+      print("_determineAndPrintPosition step5");
+
+      if (permission == LocationPermission.deniedForever) {
+        print("_determineAndPrintPosition step6");
+
+        // Permissions are denied forever, handle appropriately.
+        return Future.error(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+      print("_determineAndPrintPosition step7");
+
+      if (permission == LocationPermission.denied) {
+        print("_determineAndPrintPosition step8");
+
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+    print("_determineAndPrintPosition step9");
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    var curPosition = await Geolocator.getCurrentPosition();
+    print(curPosition);
   }
 }

@@ -89,7 +89,7 @@ class _NewServiceRequestPageState extends State<NewServiceRequestPage> {
         final ServiceRequest newServiceRequest = ServiceRequest(
           title: title,
           details: details,
-          image: image,
+          imageFile: image,
         );
         _state.addServiceRequest(newServiceRequest);
         Navigator.pop(context);

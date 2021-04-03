@@ -5,6 +5,8 @@ import 'package:project19/state/service_request_state.dart';
 import 'package:project19/view/user/login.dart';
 import 'package:provider/provider.dart';
 
+import 'view/admin/admin_view.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -24,14 +26,17 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Service App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
-        home: LoginPage(),
-      ),
-
+          title: 'Service App',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.teal,
+          ),
+          home:
+              AdminViewPage() /* Scaffold(
+          appBar: AppBar(),
+          body: LoginPage(),
+        ), */
+          ),
       /* ChangeNotifierProvider<ServiceRequestState>(
         create: (_) => ServiceRequestState(),
         child: ChangeNotifierProvider<UserService>(

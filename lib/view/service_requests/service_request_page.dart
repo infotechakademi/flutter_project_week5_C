@@ -37,7 +37,8 @@ class _ServiceRequestPageState extends State<ServiceRequestPage> {
     return ListTile(
       title: Text(_request.title),
       subtitle: Text(_request.details),
-      leading: _request.image != null ? Image.file(_request.image!) : null,
+      leading:
+          _request.imageFile != null ? Image.file(_request.imageFile!) : null,
       trailing: IconButton(
         icon: Icon(
           Icons.remove,
